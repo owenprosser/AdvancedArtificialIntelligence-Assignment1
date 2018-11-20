@@ -10,13 +10,15 @@ def task1A():
     }
 
     probs["P(-d)"] = (1 - probs["P(d)"] )
-    probs["P(t|-d)"] = (1 - probs["P(t|d)"])
-    
-    probs["P(t)"] = ( probs["P(t|d)"] * probs["P(d)"] ) + ( probs["P(t|-d)"] * probs["P(-d)"])
+    probs["P(t|-d)"] = (1 - probs["P(-t|-d)"])
 
-    probs["P(d|t)"] = (probs["P(t|d)"] * probs["P(d)"]) / probs["P(t)"]
+    probs["P(t)"] = (( probs["P(t|d)"] * probs["P(d)"] ) + ( probs["P(t|-d)"] * probs["P(-d)"]))
 
-    print(probs)
+    probs["P(d|t)"] = ((probs["P(t|d)"] * probs["P(d)"]) / probs["P(t)"])
+
+    print( str(probs) + "\n\n")
+
+    print("The probability of having the disease given the test was positive: " + str(probs["P(d|t)"]))
 
 if __name__ == "__main__":
     task1A()
