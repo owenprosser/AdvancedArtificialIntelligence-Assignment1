@@ -1,3 +1,5 @@
+import csv
+
 def task1A():
     probs = {
         "P(d)": float(input("Prior probability of having a disease: ")),
@@ -20,5 +22,27 @@ def task1A():
 
     print("The probability of having the disease given the test was positive: " + str(probs["P(d|t)"]))
 
+def task1B():
+    file = open('lucas0_train.csv', 'rb')
+    reader = csv.reader(file)
+    for row in reader:
+        print(row)
+    file.close()
+
+def task2():
+    userInput = input("Enter Sequence of Symbols: ")
+    sequence = []
+
+    for index, item in enumerate(userInput):
+        if item not in ['c', 'w', 'h']:
+            continue
+        else:
+            sequence.append(userInput[index])
+
+    print(sequence)
+
+
 if __name__ == "__main__":
-    task1A()
+    #task1A()
+    #task1B()
+    task2()
