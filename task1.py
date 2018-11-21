@@ -1,4 +1,4 @@
-import csv
+import csv, time
 
 def task1A():
     probs = {
@@ -23,10 +23,64 @@ def task1A():
     print("The probability of having the disease given the test was positive: " + str(probs["P(d|t)"]))
 
 def task1B():
-    file = open('lucas0_train.csv', 'rb')
+    variables = {
+        'S':[0, 'A', 'PP'],
+        'YF':[1, 'S'],
+        'ANX':[2],
+        'PP':[3],
+        'G':[4],
+        'AD':[5, 'G'],
+        'BED':[6],
+        'CA':[7, 'AD', 'F'],
+        'F':[8, 'LC', 'C'],
+        'A':[9],
+        'C':[10, 'LC', 'A'],
+        'LC':[11, 'S','G']
+    }
+
+    probs = {
+        'S':[],
+        'YF':[],
+        'ANX':[],
+        'PP':[],
+        'G':[],
+        'AD':[],
+        'BED':[],
+        'CA':[],
+        'F':[],
+        'A':[],
+        'C':[],
+        'LC':[]
+    }
+
+    file = open('lucas0_train.csv', 'r')
     reader = csv.reader(file)
-    for row in reader:
-        print(row)
+
+    for key, value in variables.items():
+        trueCount = 0
+        totalCount = 0
+        print(key, value, 'len--', len(value))
+        if (len(value) == 1):
+            print(key, value, " less than 1")
+            for row in reader:
+                if (row[value[0]] in ['0', '1']):
+                    totalCount += 1
+                    if row[value[0]] == '1':
+                        trueCount += 1
+                    #print(row[value[0]])
+                    #input("---- " + str(value[0]))
+                    else:
+                        continue
+                else:
+                    #input("----WORD: " + str(row[value[0]]))
+                    continue
+            print("!!!", key[0], trueCount)
+            probs[key[0]] = trueCount
+        else:
+            continue
+
+    print(probs)
+
     file.close()
 
 def task2():
@@ -41,8 +95,7 @@ def task2():
 
     print(sequence)
 
-
 if __name__ == "__main__":
     #task1A()
-    #task1B()
-    task2()
+    task1B()
+    #task2()
