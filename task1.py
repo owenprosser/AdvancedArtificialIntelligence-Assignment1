@@ -53,35 +53,36 @@ def task1B():
         'LC':[]
     }
 
-    file = open('lucas0_train.csv', 'r')
-    reader = csv.reader(file)
-
     for key, value in variables.items():
-        trueCount = 0
-        totalCount = 0
-        print(key, value, 'len--', len(value))
+        #print(key, value, 'len--', len(value))
         if (len(value) == 1):
+            trueCount = 0
+            totalCount = 0
             print(key, value, " less than 1")
-            for row in reader:
-                if (row[value[0]] in ['0', '1']):
-                    totalCount += 1
-                    if row[value[0]] == '1':
-                        trueCount += 1
-                    #print(row[value[0]])
-                    #input("---- " + str(value[0]))
-                    else:
-                        continue
-                else:
-                    #input("----WORD: " + str(row[value[0]]))
-                    continue
-            print("!!!", key[0], trueCount)
-            probs[key[0]] = trueCount
+            (trueCount, totalCount) = oneParent(value[0])
+            print((trueCount, totalCount))
+            probs[key] = (trueCount, totalCount)
         else:
             continue
 
-    print(probs)
+    print("\n\nPrinting Probs: ")
+    for key, value in probs.items():
+        print(key, value)
+
+def oneParent(position):
+    trueCount = 0
+    totalCount = 0
+    file = open('lucas0_train.csv', 'r')
+    reader = csv.reader(file)
+
+    for row in reader:
+        if (row[position] in ['0', '1']):
+            totalCount += 1
+            if row[position] == '1':
+                trueCount += 1
 
     file.close()
+    return(trueCount, totalCount)
 
 def task2():
     userInput = input("Enter Sequence of Symbols: ")
