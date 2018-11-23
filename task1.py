@@ -18,7 +18,7 @@ def task1A():
 
     probs["P(d|t)"] = ((probs["P(t|d)"] * probs["P(d)"]) / probs["P(t)"])
 
-    print( str(probs) + "\n\n")
+    print("\n" + str(probs) + "\n\n")
 
     print("The probability of having the disease given the test was positive: " + str(probs["P(d|t)"]))
 
@@ -161,7 +161,24 @@ def task2():
 
     print(sequence)
 
+def menu():
+    while (True):
+        print("\n\nOwen Prosser - PRO14514822 - Advanced Artificial Inteligence - CMP9132M")
+        userInput = None
+        print("1: Task 1a")
+        print("2: Task 1b")
+        print("3: Task 2")
+        userInput = str(input())
+        if userInput[0] in ['1', '2', '3']:
+            if userInput[0] == "1":
+                task1A()
+            elif userInput[0] == '2':
+                task1B()
+            elif userInput[0] == '3':
+                task2()
+            else:
+                continue
+
+
 if __name__ == "__main__":
-    #task1A()
-    task1B()
-    #task2()
+    menu()
