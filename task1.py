@@ -69,6 +69,20 @@ def task1B():
             (trueCount, totalCount) = twoParent(value[0], variables[value[1]])
             print((trueCount, totalCount))
             probs[key] = ((trueCount+1)/(totalCount+2))
+        elif (len(value) == 3):
+            trueCount = 0
+            totalCount = 0
+            print(key, value, " 3 Parents")
+            parent1 = variables[value[1]]
+            parent1 = parent1[0]
+            parent2 = variables[value[2]]
+            parent2 = parent2[0]
+            print("parent 1:", parent1)
+            print("parent 2:", parent2)
+            print(type(parent1))
+            (trueCount, totalCount) = threeParent(value[0], parent1, parent2)
+            print((trueCount, totalCount))
+            probs[key] = ((trueCount+1)/(totalCount+2))
         else:
             continue
 
@@ -100,6 +114,21 @@ def twoParent(position, parent):
 
     for row in reader:
         if (row[position] in ['0', '1']) and (row[parent[0]] in ['0', '1']):
+            totalCount += 1
+            if row[position] == '1':
+                trueCount += 1
+
+    file.close()
+    return(trueCount, totalCount)
+
+def threeParent(position, parent1, parent2):
+    trueCount = 0
+    totalCount = 0
+    file = open('lucas0_train.csv', 'r')
+    reader = csv.reader(file)
+
+    for row in reader:
+        if (row[position] in ['0', '1']) and (row[parent1] in ['0', '1']) and (row[parent1] in ['0', '1']):
             totalCount += 1
             if row[position] == '1':
                 trueCount += 1
