@@ -65,12 +65,15 @@ def task1B():
         elif (len(value) == 2):
             trueCount = 0
             totalCount = 0
+            yCount = 0
             print(key, value, " 2 Parents")
-            (trueCount, totalCount) = twoParent(value[0], variables[value[1]])
-            print((trueCount, totalCount))
-            probs[key] = ((trueCount+1)/(totalCount+2))
+            (trueCount, yCount, totalCount) = twoParent(value[0], variables[value[1]])
+            print((trueCount, yCount, totalCount))
+            probs[key] = ((trueCount+1)/(yCount+2))
         elif (len(value) == 3):
             trueCount = 0
+            totalCount = 0
+            yCount = 0
             totalCount = 0
             print(key, value, " 3 Parents")
             parent1 = variables[value[1]]
@@ -80,9 +83,9 @@ def task1B():
             print("parent 1:", parent1)
             print("parent 2:", parent2)
             print(type(parent1))
-            (trueCount, totalCount) = threeParent(value[0], parent1, parent2)
+            (trueCount, yCount, totalCount) = twoParent(value[0], variables[value[1]])
             print((trueCount, totalCount))
-            probs[key] = ((trueCount+1)/(totalCount+2))
+            probs[key] = ((trueCount+1)/(yCount+2))
         else:
             continue
 
@@ -108,6 +111,7 @@ def oneParent(position):
 def twoParent(position, parent):
     print("Parent is:", str(parent[0]))
     trueCount = 0
+    yCount = 0
     totalCount = 0
     file = open('lucas0_train.csv', 'r')
     reader = csv.reader(file)
@@ -115,14 +119,18 @@ def twoParent(position, parent):
     for row in reader:
         if (row[position] in ['0', '1']) and (row[parent[0]] in ['0', '1']):
             totalCount += 1
-            if row[position] == '1':
-                trueCount += 1
+            if (row[parent[0]] == '1'):
+                yCount += 1
+                if (row[position] == '1'):
+                    trueCount += 1
 
     file.close()
-    return(trueCount, totalCount)
+    return(trueCount, yCount, totalCount)
 
 def threeParent(position, parent1, parent2):
     trueCount = 0
+    yCount  = 0
+    zCount = 0
     totalCount = 0
     file = open('lucas0_train.csv', 'r')
     reader = csv.reader(file)
@@ -131,10 +139,15 @@ def threeParent(position, parent1, parent2):
         if (row[position] in ['0', '1']) and (row[parent1] in ['0', '1']) and (row[parent1] in ['0', '1']):
             totalCount += 1
             if row[position] == '1':
-                trueCount += 1
+                if row[parent1] == '1':
+                    if row[parent2] == '1':
+                        trueCount += 1
+            if row[parent1] == '1':
+                if row[parent2] == '1':
+                    yCount += 1
 
     file.close()
-    return(trueCount, totalCount)
+    return(trueCount, yCount, totalCount)
 
 def task2():
     userInput = input("Enter Sequence of Symbols: ")
