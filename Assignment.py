@@ -151,16 +151,53 @@ def threeParent(position, parent1, parent2):
     return(trueCount, yCount, totalCount)
 
 def task2():
-    userInput = input("Enter Sequence of Symbols: ")
     sequence = []
-
-    for index, item in enumerate(userInput):
-        if item not in ['c', 'w', 'h']:
-            continue
-        else:
-            sequence.append(userInput[index])
+    
+    while (len(sequence) < 1):
+        userInput = input("Enter Sequence of Symbols: ")
+        for index, item in enumerate(userInput):
+            if item not in ['c', 'w', 'h']:
+                continue
+            else:
+                sequence.append(userInput[index])
 
     print(sequence)
+    print(len(sequence))
+
+    matrices = {
+        'Cold': [[0.3, 0],
+                  [0, 0.3]],
+
+        'Hot':  [[0.35, 0],
+                  [0, 0.35]],
+
+        'Warm': [[0.35, 0],
+                  [0, 0.1]],
+
+        'Hidden': [[0.6, 0.4],
+                    [0.4, 0.6]],
+
+        'initial':[0.5, 0.5]
+    }
+
+    for key, value in matrices.items():
+        print(key, value)
+
+    dotProduct(matrices['Cold'], matrices['Hot'])
+
+def dotProduct(matrixA, matrixB):
+    if (len(matrixA) == len(matrixB)) and (len(matrixA[0]) == len(matrixB[0])):
+        tempArray = [[None]*len(matrixA)]*len(matrixA[0])
+        print("\nArrays of same dimensions")
+        
+        for i in range(len(matrixA)):
+            continue
+
+        print(tempArray)
+        return(tempArray)
+    else:
+        print("Arrays of different dimensions")
+        return(1)
 
 def menu():
     while (True):
