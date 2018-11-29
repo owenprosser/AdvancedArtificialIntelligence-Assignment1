@@ -187,7 +187,8 @@ def task2():
         print(matrices['initial'])
     
     print(matrices['initial'])
-    print(sum(matrices['initial']))
+    print("\nProbability of observing the sequence: ", sequence, "is:\n", sum(matrices['initial']))
+    #print(sum(matrices['initial']))
 
 def dotProduct(matrixA, matrixB):
     if (len(matrixA) == len(matrixB)) and (len(matrixA[0]) == len(matrixB[0])):
@@ -205,10 +206,11 @@ def dotProduct(matrixA, matrixB):
 def smallProduct(matrix, smallMatrix):
     returnMatrix = [None, None]
     count = 0
+    smallCount = 0
 
-    for item in matrix:
-        returnMatrix[count] = sum(item)*smallMatrix[count]
-        count += 1
+    returnMatrix[0] = (matrix[0][0]*smallMatrix[0]) + (matrix[0][1]*smallMatrix[1])
+    returnMatrix[1] = (matrix[1][0]*smallMatrix[0]) + (matrix[1][1]*smallMatrix[1])
+
 
     return(returnMatrix)
 
