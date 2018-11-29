@@ -168,12 +168,12 @@ def task2():
               [0, 0.45]],
 
         'h':  [[0.35, 0],
-               [0, 0.35]],
+               [0, 0.1]],
 
         'w': [[0.35, 0],
-              [0, 0.1]],
+              [0, 0.45]],
 
-        'Hidden': [[0.6, 0.4],
+        'Transition': [[0.6, 0.4],
                    [0.4, 0.6]],
 
         'initial':[0.5, 0.5]
@@ -182,13 +182,13 @@ def task2():
     for key, value in matrices.items():
         print(key, value)
 
-    #x = smallProduct(dotProduct(matrices['Cold'], matrices['Hidden']), matrices['initial'])
     for item in sequence:
-        matrices['initial'] = smallProduct(dotProduct(matrices[item], matrices['Hidden']), matrices['initial'])
+        matrices['initial'] = smallProduct(dotProduct(matrices[item], matrices['Transition']), matrices['initial'])
         print(matrices['initial'])
-
+    
     print(matrices['initial'])
     print(sum(matrices['initial']))
+
 def dotProduct(matrixA, matrixB):
     if (len(matrixA) == len(matrixB)) and (len(matrixA[0]) == len(matrixB[0])):
         tempArray = [[0]*len(matrixA)]*len(matrixA[0])
@@ -205,6 +205,7 @@ def dotProduct(matrixA, matrixB):
 def smallProduct(matrix, smallMatrix):
     returnMatrix = [None, None]
     count = 0
+
     for item in matrix:
         returnMatrix[count] = sum(item)*smallMatrix[count]
         count += 1
