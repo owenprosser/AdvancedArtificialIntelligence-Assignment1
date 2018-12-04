@@ -1,4 +1,4 @@
-import csv, time
+import csv, time, numpy, random
 
 def task1A():
     probs = {
@@ -24,7 +24,7 @@ def task1A():
 
 def task1B():
     variables = {
-        'S':[0, 'A', 'PP'],
+        'S':[0, 'ANX', 'PP'],
         'YF':[1, 'S'],
         'ANX':[2],
         'PP':[3],
@@ -40,11 +40,11 @@ def task1B():
 
     probs = {
         'S':[0, 0, 0, 0], #[False-False, False-True, True-False, True-True]
-        'YF':[],
+        'YF':[0, 0],
         'ANX':[],
         'PP':[],
         'G':[],
-        'AD':[],
+        'AD':[0, 0],
         'BED':[],
         'CA':[0, 0, 0, 0],
         'F':[0, 0, 0, 0],
@@ -55,7 +55,7 @@ def task1B():
 
     for key, value in variables.items():
         #print(key, value, 'len--', len(value))
-        if (len(value) == 1) and (False):
+        if (len(value) == 1) :
             trueCount = 0
             totalCount = 0
             print(key, value, " No Parent")
@@ -63,14 +63,12 @@ def task1B():
             arrayLen = len(probs[key])
             print((trueCount, totalCount))
             probs[key] = ((trueCount+1)/(totalCount+2))
-        elif (len(value) == 2) and (False):
-            trueCount = 0
-            totalCount = 0
-            yCount = 0
+        elif (len(value) == 2):
             print(key, value, " 1 Parent")
-            (trueCount, yCount, totalCount) = oneParent(value[0], variables[value[1]])
-            print((trueCount, yCount, totalCount))
-            probs[key] = ((trueCount+1)/(yCount+2))
+            count = 0
+            for i in range(2):
+                probs[key][count] = oneParent(value[0], variables[value[1]], i)
+                count += 1
         elif (len(value) == 3):
             print(key, value, " 2 Parents")
             parent1 = variables[value[1]]
@@ -83,7 +81,7 @@ def task1B():
             count = 0
             for i in range(2):
                 for j in range(2):
-                    probs[key][count] = twoParentTest(value[0], parent1, parent2, i, j)
+                    probs[key][count] = twoParent(value[0], parent1, parent2, i, j)
                     count += 1
         else:
             continue
@@ -92,6 +90,10 @@ def task1B():
     for key, value in probs.items():
         padding  = [' ']*(3-len(key))
         print(''.join(padding), key, " -\t", value)
+    print("\n")
+
+    priorSamplingArray = priorSampling(probs)
+    rejectionSampling(priorSamplingArray)
 
 def noParent(position):
     trueCount = 0
@@ -108,69 +110,173 @@ def noParent(position):
     file.close()
     return(trueCount, totalCount)
 
-def oneParent(position, parent):
-    print("Parent is:", str(parent[0]))
-    trueCount = 0
+def oneParent(position, parent, x):
+    print(x)
+    file = open('lucas0_train.csv', 'r')
+    reader = csv.reader(file)
+    x_yCount = 0
     yCount = 0
-    totalCount = 0
-    file = open('lucas0_train.csv', 'r')
-    reader = csv.reader(file)
 
     for row in reader:
-        if (row[position] in ['0', '1']) and (row[parent[0]] in ['0', '1']):
-            totalCount += 1
-            if (row[parent[0]] == '1'):
+        if (row[position] in ['0', '1']):
+            if (row[position] == '1') and (row[parent[0]] == str(x)):
+                x_yCount += 1
+            if (row[parent[0]] == str(x)):
                 yCount += 1
-                if (row[position] == '1'):
-                    trueCount += 1
+
+    return ((x_yCount + 1) / (yCount + 2))
 
     file.close()
-    return(trueCount, yCount, totalCount)
 
-def twoParent(position, parent1, parent2):
-    trueCount = 0
-    yCount  = 0
-    zCount = 0
-    totalCount = 0
-    file = open('lucas0_train.csv', 'r')
-    reader = csv.reader(file)
-
-    for row in reader:
-        if (row[position] in ['0', '1']) and (row[parent1] in ['0', '1']) and (row[parent1] in ['0', '1']):
-            totalCount += 1
-            if row[position] == '1':
-                if row[parent1] == '1':
-                    if row[parent2] == '1':
-                        trueCount += 1
-            if row[parent1] == '1':
-                if row[parent2] == '1':
-                    yCount += 1
-
-    file.close()
-    return(trueCount, yCount, totalCount)
-
-def twoParentTest(position, parent1, parent2, x, y):
+def twoParent(position, parent1, parent2, x, y):
     print(x, y)
     file = open('lucas0_train.csv', 'r')
     reader = csv.reader(file)
-    xCount = 0
-    yCount = 0
-    zCount = 0
+    x_y_zCount = 0
+    y_zCount = 0
         
     for row in reader:
         if (row[position] in ['0', '1']):
-            if (row[position] == '1'):
-                xCount += 1
-            if (row[parent1] == str(x)):
-                yCount += 1
-            if (row[parent2] == str(y)):
-                zCount += 1
+            if (row[position] == '1') and (row[parent1] == str(x)) and (row[parent2] == str(y)):
+                x_y_zCount +=1
+            if (row[parent1] == str(x)) and (row[parent2] == str(y)):
+                y_zCount += 1
     
-    print(xCount, yCount, zCount)
-    returnValue = ((xCount+yCount+zCount)+1)/((yCount+zCount)+2)
+    returnValue = ((x_y_zCount)+1)/((y_zCount)+2)
     return(returnValue)
 
     file.close()
+
+def priorSampling(probs):
+    print("Prior Sampling")
+    sampleSize = 1000
+    randomArray = numpy.random.rand(sampleSize, 8)
+    priorArray = numpy.zeros((sampleSize, 8))
+
+    for i in range(sampleSize):
+        for j in range(len(priorArray[0])):
+            if (j == 0): #ANX
+                if (randomArray[i][j] < probs['ANX']):
+                    priorArray[i][j] = 1
+                else:
+                    priorArray[i][j] = 0
+            if (j == 1): #PP
+                if (randomArray[i][j] < probs['PP']):
+                    priorArray[i][j] = 1
+                else:
+                    priorArray[i][j] = 0
+            if (j == 2): #S
+                if (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['S'][0]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['S'][1]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['S'][2]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['S'][3]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+            if (j == 3): #G
+                if (randomArray[i][j] < probs['G']):
+                    priorArray[i][j] = 1
+                else:
+                    priorArray[i][j] = 0
+            if (j == 4): #LC
+                if (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['LC'][0]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['LC'][1]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['LC'][2]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                if (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['LC'][3]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+            if (j == 5): #A
+                if (randomArray[i][j] < probs['A']):
+                    priorArray[i][j] = 1
+                else:
+                    priorArray[i][j] = 0
+            if (j == 6): #C
+                if (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['C'][0]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['C'][1]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['C'][2]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                if (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['C'][3]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+            if (j == 7): #F
+                if (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['F'][0]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 0) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['F'][1]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                elif (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 0):
+                    if (randomArray[i][j] < probs['F'][2]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+                if (priorArray[i][j-2] == 1) and (priorArray[i][j-1] == 1):
+                    if (randomArray[i][j] < probs['F'][3]):
+                        priorArray[i][j] = 1
+                    else:
+                        priorArray[i][j] = 0
+            print(i,j)
+
+    #print(priorArray)
+    return(priorArray)
+
+def rejectionSampling(prior):
+    smokingCount = 0
+    notSmokingCount = 0
+    for i in range(len(prior)):
+        if (prior[i][2] == 1) and (prior[i][6] == 1) and (prior[i][7] == 1):
+            smokingCount += 1
+        elif (prior[i][2] == 0) and (prior[i][6] == 1) and (prior[i][7] == 1):
+            notSmokingCount += 1
+
+    smokingCountAnswer = smokingCount/len(prior)
+    notSmokingCountAnswer = notSmokingCount/len(prior)
+
+    print(smokingCountAnswer, notSmokingCountAnswer)
 
 def task2():
     sequence = []
