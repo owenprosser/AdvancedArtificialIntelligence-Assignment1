@@ -93,6 +93,8 @@ def task1B():
     print("\n")
 
     priorSamplingArray = priorSampling(probs)
+    smokingCountAnswer = 0
+    notSmokingCountAnswer = 0
     rejectionSampling(priorSamplingArray)
 
 def noParent(position):
@@ -148,8 +150,7 @@ def twoParent(position, parent1, parent2, x, y):
     file.close()
 
 def priorSampling(probs):
-    print("Prior Sampling")
-    sampleSize = 1000
+    sampleSize = int(input("Enter the Number of Samples: "))
     randomArray = numpy.random.rand(sampleSize, 8)
     priorArray = numpy.zeros((sampleSize, 8))
 
@@ -259,7 +260,6 @@ def priorSampling(probs):
                         priorArray[i][j] = 1
                     else:
                         priorArray[i][j] = 0
-            print(i,j)
 
     #print(priorArray)
     return(priorArray)
@@ -276,7 +276,18 @@ def rejectionSampling(prior):
     smokingCountAnswer = smokingCount/len(prior)
     notSmokingCountAnswer = notSmokingCount/len(prior)
 
+    normalise(smokingCountAnswer, notSmokingCountAnswer)
+
+def normalise(smokingCountAnswer, notSmokingCountAnswer):
+    print("normalise")
     print(smokingCountAnswer, notSmokingCountAnswer)
+
+    alpha = 1/(smokingCountAnswer + notSmokingCountAnswer)
+    normSmokingCountAnswer = smokingCountAnswer * alpha
+    normNotSmokingCountAnswer = notSmokingCountAnswer * alpha
+    print("Normalised Values:")
+    print(normSmokingCountAnswer, normNotSmokingCountAnswer)
+    print("Probability Smoking given Coughing and Fatigue (P|S,F): ", normSmokingCountAnswer)
 
 def task2():
     sequence = []
